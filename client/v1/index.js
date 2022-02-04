@@ -29,8 +29,10 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // 🎯 TODO: The cheapest t-shirt
 // 0. I have 3 favorite brands stored in MY_FAVORITE_BRANDS variable
 // 1. Create a new variable and assign it the link of the cheapest t-shirt
+const cheapest_t_shirt=[{name:'CHEAPEST_T_SHIRT',url:'https://adresse.paris/t-shirts-et-polos/4238-t-shirt-ranelagh-1300000262026.html'}]
 // I can find on these e-shops
 // 2. Log the variable
+console.log(cheapest_t_shirt);
 
 
 
@@ -47,36 +49,62 @@ console.log(MY_FAVORITE_BRANDS[0]);
 
 // 🎯 TODO: Number of products
 // 1. Create a variable and assign it the number of products
+var nbOfProduct = marketplace.length;
 // 2. Log the variable
-
+console.log(nbOfProduct);
 
 // 🎯 TODO: Brands name
 // 1. Create a variable and assign it the list of brands name only
 // 2. Log the variable
 // 3. Log how many brands we have
+const brandList =[];
+
+for (let step =0; step < nbOfProduct;step++)
+{
+    if(!brandList.includes(marketplace[step].brand)){
+
+brandList[step]=marketplace[step].brand;
+
+    }
+
+}
+
+console.log(brandList);
 
 
 // 🎯 TODO: Sort by price
 // 1. Create a function to sort the marketplace products by price
 // 2. Create a variable and assign it the list of products by price from lowest to highest
 // 3. Log the variable
+marketplace.sort((a, b) => (a.price > b.price) ? 1 : -1)
 
 
 // 🎯 TODO: Sort by date
 // 1. Create a function to sort the marketplace objects by products date
 // 2. Create a variable and assign it the list of products by date from recent to old
 // 3. Log the variable
-
+marketplace.sort((a, b) => (a.date < b.date) ? 1 : -1)
 
 // 🎯 TODO: Filter a specific price range
 // 1. Filter the list of products between 50€ and 100€
 // 2. Log the list
+function filterByPrice(obj) {
+  if (obj.price<=100 && obj.price>=50) 
+  {
+    return true
+  } 
+  return false;
+}
+  
+let arrayByPrice = marketplace.filter(filterByPrice);
+console.log(arrayByPrice);
 
 
 // 🎯 TODO: Average price
 // 1. Determine the average price of the marketplace
 // 2. Log the average
-
+const average = marketplace.reduce((total, next) => total + next.price, 0) / marketplace.length;
+console.log(average);
 
 
 
@@ -102,18 +130,95 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // };
 //
 // 2. Log the variable
-// 3. Log the number of products by brands
+function filterDedicated(obj) {
+  if (obj.brand==='dedicated') 
+  {
+    return true
+  } 
+  return false;
+}
+  
+let dedicated = marketplace.filter(filterDedicated);
+console.log(dedicated);
 
+function filterLoom(obj) {
+  if (obj.brand==='loom') 
+  {
+    return true
+  } 
+  return false;
+}
+  
+let loom = marketplace.filter(filterLoom);
+console.log(loom);
+
+function filter1083(obj) {
+  if (obj.brand==='1083') 
+  {
+    return true
+  } 
+  return false;
+}
+  
+let ten83 = marketplace.filter(filter1083);
+console.log(ten83);
+
+function filterAdresse(obj) {
+  if (obj.brand==='adresse') 
+  {
+    return true
+  } 
+  return false;
+}
+  
+let adresse = marketplace.filter(filterAdresse);
+console.log(adresse);
+
+function filterAatise(obj) {
+  if (obj.brand==='aatise') 
+  {
+    return true
+  } 
+  return false;
+}
+  
+let aatise = marketplace.filter(filterAatise);
+console.log(aatise);
+
+const brands = {
+'aatise':[aatise],
+'adresse':[adresse],
+'ten83':[ten83],
+'loom':[loom],
+'dedicated':[dedicated]
+}
+console.log(brands);
+
+
+// 3. Log the number of products by brands
+console.log(brands.loom[0].length);
+console.log(brands.adresse[0].length);
+console.log(brands.aatise[0].length);
+console.log(brands.ten83[0].length);
+console.log(brands.dedicated[0].length);
 
 // 🎯 TODO: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
 // 2. Log the sort
-
+console.log(brands.aatise[0].sort((a, b) => (a.price < b.price) ? 1 : -1));
+console.log(brands.adresse[0].sort((a, b) => (a.price < b.price) ? 1 : -1));
+console.log(brands.ten83[0].sort((a, b) => (a.price < b.price) ? 1 : -1));
+console.log(brands.dedicated[0].sort((a, b) => (a.price < b.price) ? 1 : -1));
+console.log(brands.loom[0].sort((a, b) => (a.price < b.price) ? 1 : -1));
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
 // 2. Log the sort
-
+console.log(brands.aatise[0].sort((a, b) => (a.date > b.date) ? 1 : -1));
+console.log(brands.adresse[0].sort((a, b) => (a.date > b.date) ? 1 : -1));
+console.log(brands.ten83[0].sort((a, b) => (a.date > b.date) ? 1 : -1));
+console.log(brands.loom[0].sort((a, b) => (a.date > b.date) ? 1 : -1));
+console.log(brands.dedicated[0].sort((a, b) => (a.date > b.date) ? 1 : -1));
 
 
 
