@@ -233,7 +233,8 @@ console.log(brands.dedicated[0].sort((a, b) => (a.date > b.date) ? 1 : -1));
 // 🎯 TODO: Compute the p90 price value
 // 1. Compute the p90 price value of each brand
 // The p90 value (90th percentile) is the lower value expected to be exceeded in 90% of the products
-
+let stdAatise = Math.sqrt(brands.aatise[0].map(x => Math.pow(x - averageAatise, 2)).reduce((a, b) => a.price + b.price) / brands.aatise[0].length);
+console.log(stdAatise);
 
 
 
@@ -309,21 +310,55 @@ const COTELE_PARIS = [
 // 🎯 TODO: New released products
 // // 1. Log if we have new products only (true or false)
 // // A new product is a product `released` less than 2 weeks.
+let todaysDate = new Date();
+let y = new Boolean("True")
+let diffTime = 0;
+let diffDays = 0;
+for (let i = 0; i < COTELE_PARIS.length; i++) {
+     diffTime = Math.abs(todaysDate - Date.parse(COTELE_PARIS[i].released));
+     diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    console.table(diffDays,diffTime);
+     if(diffDays>=14){
+        y = ("False");
+
+}
+}
+console.log(y);
 
 
 // 🎯 TODO: Reasonable price
 // // 1. Log if coteleparis is a reasonable price shop (true or false)
 // // A reasonable price if all the products are less than 100€
+let z = new Boolean("True")
+for (let i = 0; i < COTELE_PARIS.length; i++) {
+    console.table(COTELE_PARIS[i].price);
+     if(COTELE_PARIS[i].price>=100){
+        z = ("False");
 
+}
+}
+console.log(z);
 
 // 🎯 TODO: Find a specific product
 // 1. Find the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
 // 2. Log the product
+for (let i = 0; i < COTELE_PARIS.length; i++) {
+     if(COTELE_PARIS[i].uuid==='b56c6d88-749a-5b4c-b571-e5b5c6483131'){
+        console.log("this is the product",COTELE_PARIS[i]);
 
+}
+}
 
 // 🎯 TODO: Delete a specific product
 // 1. Delete the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
 // 2. Log the new list of product
+for (let i = 0; i < COTELE_PARIS.length; i++) {
+     if(COTELE_PARIS[i].uuid==='b56c6d88-749a-5b4c-b571-e5b5c6483131'){
+           COTELE_PARIS.splice(i,1);
+
+}
+}
+console.log(COTELE_PARIS);
 
 // 🎯 TODO: Save the favorite product
 let blueJacket = {
