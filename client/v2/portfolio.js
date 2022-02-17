@@ -11,6 +11,7 @@ const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 const selectBrand = document.querySelector('#brand-select');
+const selectRecent = document.querySelector('#recently');
 
 /**
  * Set global value
@@ -40,14 +41,27 @@ const fetchProducts = async (page = 1, size = 12,brand='') => {
       console.error(body);
       return {currentProducts, currentPagination};
     }
-
+    console.log(body.data)
     return body.data;
   } catch (error) {
     console.error(error);
     return {currentProducts, currentPagination};
   }
 };
+const filterByDate = products => {
+  let twoWeeksAgo = new Date();
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate()-50);
+  let filteredByDate=[];
+  for (let i = 0; i < products.result.length; i++) {
+     if(twoWeeksAgo<=new Date(products.result[i]['released'])){
+        filteredByDate.push(products.result[i]);
+     }
+  }
 
+  products.result = filteredByDate
+
+  return products;
+}
 /**
  * Render list of products
  * @param  {Array} products
@@ -129,6 +143,26 @@ selectBrand.addEventListener('change',event=>{
     .then(setCurrentProducts)
       .then(() => render(currentProducts, currentPagination));
 })
+
+var clicked = false
+
+selectRecent.addEventListener('click',event=>{
+  if(clicked === false){
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+      .then(setCurrentProducts)
+        .then(() => render(currentProducts, currentPagination));
+        console.log('click');
+  }
+  else{
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    .then((data) => {return filterByDate(data);})
+        .then(setCurrentProducts)
+          .then(() => render(currentProducts, currentPagination));
+          console.log('click');
+  }
+  clicked = !clicked
+})
+
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
 
