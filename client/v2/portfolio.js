@@ -12,6 +12,8 @@ const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 const selectBrand = document.querySelector('#brand-select');
 const selectRecent = document.querySelector('#recently');
+const selectReasonable = document.querySelector('#reasonable');
+const selectSort = document.querySelector('#sort-select');
 
 /**
  * Set global value
@@ -57,11 +59,21 @@ const filterByDate = products => {
         filteredByDate.push(products.result[i]);
      }
   }
-
   products.result = filteredByDate
-
   return products;
 }
+
+const filterByPrice = products => {
+  let filteredByPrice=[];
+  for (let i = 0; i < products.result.length; i++) {
+     if(50>=products.result[i]['price']){
+        filteredByPrice.push(products.result[i]);
+     }
+  }
+  products.result = filteredByPrice;
+  return products;
+}
+
 /**
  * Render list of products
  * @param  {Array} products
@@ -109,7 +121,7 @@ const renderPagination = pagination => {
 const renderIndicators = pagination => {
   const {count} = pagination;
 
-  spanNbProducts.innerHTML = count;
+  spanNbProducts.innerHTML = currentProducts.length;
 };
 
 const render = (products, pagination) => {
@@ -144,25 +156,60 @@ selectBrand.addEventListener('change',event=>{
       .then(() => render(currentProducts, currentPagination));
 })
 
-var clicked = false
+var clickedDate = false
 
 selectRecent.addEventListener('click',event=>{
-  if(clicked === false){
+  if(clickedDate === false){
     fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
       .then(setCurrentProducts)
         .then(() => render(currentProducts, currentPagination));
-        console.log('click');
   }
   else{
     fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then((data) => {return filterByDate(data);})
         .then(setCurrentProducts)
           .then(() => render(currentProducts, currentPagination));
+  }
+  clickedDate = !clickedDate
+})
+var clickedPrice = true
+selectReasonable.addEventListener('click',event=>{
+  if(clickedPrice === false){
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+      .then(setCurrentProducts)
+        .then(() => render(currentProducts, currentPagination));
+  }
+  else{
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    .then((data) => {return filterByPrice(data);})
+        .then(setCurrentProducts)
+          .then(() => render(currentProducts, currentPagination));
           console.log('click');
   }
-  clicked = !clicked
+  clickedPrice = !clickedPrice
 })
-
+selectSort.addEventListener('change', event => {
+  if(event.target.value==='price-asc'){
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    .then(setCurrentProducts)
+      .then(() => render(currentProducts.sort((a, b) => (a.price > b.price) ? 1 : -1), currentPagination));
+  }
+  else if(event.target.value==='price-desc'){
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    .then(setCurrentProducts)
+      .then(() => render(currentProducts.sort((a, b) => (a.price < b.price) ? 1 : -1), currentPagination));
+  }
+  else if(event.target.value==='date-asc'){
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    .then(setCurrentProducts)
+      .then(() => render(currentProducts.sort((a, b) => (a.released < b.released) ? 1 : -1), currentPagination));
+  }
+  else if(event.target.value==='date-desc'){
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    .then(setCurrentProducts)
+      .then(() => render(currentProducts.sort((a, b) => (a.released > b.released) ? 1 : -1), currentPagination));
+    }
+});
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
 
