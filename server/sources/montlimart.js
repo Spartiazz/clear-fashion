@@ -15,8 +15,12 @@ const parse = data => {
         .find('.product-name')
         .find('a')
         .attr('title')
-
-      return {name};
+        const price = parseInt(
+            $(element)
+              .find('.regular-price')
+              .text()
+          );
+      return {name,price};
     })
     .get();
 };
