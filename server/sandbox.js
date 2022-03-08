@@ -6,7 +6,10 @@ async function sandbox (eshop = 'https://www.dedicatedbrand.com/en/men/news') {
     console.log(`🕵️‍♀️  browsing ${eshop} source`);
 
     const products = await dedicatedbrand.scrape(eshop);
-
+    
+    products.forEach(products => {
+      console.log(products.price);
+    })
     console.log(products);
     console.log('done');
     process.exit(0);
