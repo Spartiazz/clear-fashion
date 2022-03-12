@@ -20,11 +20,20 @@ app.get('/', (request, response) => {
   response.send({'ack': true});
 });
 
-app.get('/product/:id', async(request, response) => {
+app.get('/products/:id', async(request, response) => {
   const products = await db.find({'_id':request.params.id});
   response.send(products);
 });
 
+app.get('/products/:price', async(request, response) => {
+  const price = await db.find({'price':request.params.price});
+  response.send(price);
+});
+
+app.get('/products/search'),async(request,response)=>{
+  const result = await db.find({})
+
+}
 
 app.listen(PORT);
 
