@@ -20,20 +20,35 @@ app.get('/', (request, response) => {
   response.send({'ack': true});
 });
 
+app.get('/products/search',async(request,response)=>{
+  const {limit,price,brand}=request.query;
+  let product
+  if(typeof price !== 'undefined'){
+    let priceInt = parseInt(price);
+    if(typeof limit === 'undefined' && typeof brand === 'undefined' && typeof price !== 'undefined'){
+      product = await db.find({"price":{"$lte":priceInt}})
+    }
+  }
+  if(typeof limit !== 'undefined' && typeof brand !== 'undefined'){
+    product = await db.find({'brand':brand})
+  }
+  else if(typeof brand !== 'undefined'){
+    product = await db.find({'brand':brand})
+  }
+  else if(typeof limit !== 'undefined' && typeof brand === 'undefined'){
+    product = await db.find({})
+  }
+  else if(typeof limit === 'undefined' && typeof brand === 'undefined' && typeof price === 'undefined'){
+    product = await db.find({})
+  }
+ 
+  response.send(product)
+});
+
 app.get('/products/:id', async(request, response) => {
   const products = await db.find({'_id':request.params.id});
   response.send(products);
 });
-
-app.get('/products/:price', async(request, response) => {
-  const price = await db.find({'price':request.params.price});
-  response.send(price);
-});
-
-app.get('/products/search'),async(request,response)=>{
-  const result = await db.find({})
-
-}
 
 app.listen(PORT);
 
