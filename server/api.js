@@ -21,27 +21,26 @@ app.get('/', (request, response) => {
 });
 
 app.get('/products/search',async(request,response)=>{
-  const {limit,price,brand}=request.query;
+  const {price,brand}=request.query;
   let product
   if(typeof price !== 'undefined'){
     let priceInt = parseInt(price);
-    if(typeof limit === 'undefined' && typeof brand === 'undefined' && typeof price !== 'undefined'){
+    if(typeof brand === 'undefined'){
       product = await db.find({"price":{"$lte":priceInt}})
     }
-  }
-  if(typeof limit !== 'undefined' && typeof brand !== 'undefined'){
-    product = await db.find({'brand':brand})
+    else{
+      product = await db.find({"price":{"$lte":priceInt},"brand":brand})
+      console.log("here",product)
+    }
   }
   else if(typeof brand !== 'undefined'){
     product = await db.find({'brand':brand})
+    console.log("here dernier if",typeof price)
+    
   }
-  else if(typeof limit !== 'undefined' && typeof brand === 'undefined'){
+  else{
     product = await db.find({})
   }
-  else if(typeof limit === 'undefined' && typeof brand === 'undefined' && typeof price === 'undefined'){
-    product = await db.find({})
-  }
- 
   response.send(product)
 });
 
