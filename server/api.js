@@ -30,13 +30,10 @@ app.get('/products/search',async(request,response)=>{
     }
     else{
       product = await db.find({"price":{"$lte":priceInt},"brand":brand})
-      console.log("here",product)
     }
   }
   else if(typeof brand !== 'undefined'){
     product = await db.find({'brand':brand})
-    console.log("here dernier if",typeof price)
-    
   }
   else{
     product = await db.find({})
