@@ -20,9 +20,8 @@ const selectSort = document.querySelector('#sort-select');
  * @param {Array} result - products to display
  * @param {Object} meta - pagination meta info
  */
-const setCurrentProducts = ({result, meta}) => {
+const setCurrentProducts = result => {
   currentProducts = result;
-  currentPagination = meta;
 };
 
 /**
@@ -31,20 +30,16 @@ const setCurrentProducts = ({result, meta}) => {
  * @param  {Number}  [size=12] - size of the page
  * @return {Object}
  */
-const fetchProducts = async (page = 1, size = 12,brand='') => {
+const fetchProducts = async (page = 1, size = 12, brand="All") => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}&brand=${brand}`
+      `https://clear-fashion-taupe.vercel.app/products/search?page=${page}&size=${size}&brand=${brand}`
+      //?page=${page}&size=${size}&brand=${brand}&price=${price}
     );
     
     const body = await response.json();
-
-    if (body.success !== true) {
-      console.error(body);
-      return {currentProducts, currentPagination};
-    }
-    console.log(body.data)
-    return body.data;
+    console.log(body)
+    return body;
   } catch (error) {
     console.error(error);
     return {currentProducts, currentPagination};
@@ -84,7 +79,7 @@ const renderProducts = products => {
   const template = products
     .map(product => {
       return `
-      <div class="product" id=${product.uuid}>
+      <div class="product" id=${product._id}>
         <span>${product.brand}</span>
         <a href="${product.link}">${product.name}</a>
         <span>${product.price}</span>
@@ -139,19 +134,19 @@ const render = (products, pagination) => {
  */
 selectShow.addEventListener('change', event => {
   currentPagination.pageSize=parseInt(event.target.value);
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then(setCurrentProducts)
       .then(() => render(currentProducts, currentPagination));
 });
 selectPage.addEventListener('change',event=>{
   currentPagination.currentPage=parseInt(event.target.value);
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then(setCurrentProducts)
       .then(() => render(currentProducts, currentPagination));
 })
 selectBrand.addEventListener('change',event=>{
-  currentPagination.currentBrand=(event.target.value);
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+  currentPagination=(event.target.value);
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then(setCurrentProducts)
       .then(() => render(currentProducts, currentPagination));
 })
@@ -160,12 +155,12 @@ var clickedDate = false
 
 selectRecent.addEventListener('click',event=>{
   if(clickedDate === false){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
       .then(setCurrentProducts)
         .then(() => render(currentProducts, currentPagination));
   }
   else{
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then((data) => {return filterByDate(data);})
         .then(setCurrentProducts)
           .then(() => render(currentProducts, currentPagination));
@@ -175,12 +170,12 @@ selectRecent.addEventListener('click',event=>{
 var clickedPrice = true
 selectReasonable.addEventListener('click',event=>{
   if(clickedPrice === false){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
       .then(setCurrentProducts)
         .then(() => render(currentProducts, currentPagination));
   }
   else{
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then((data) => {return filterByPrice(data);})
         .then(setCurrentProducts)
           .then(() => render(currentProducts, currentPagination));
@@ -190,22 +185,22 @@ selectReasonable.addEventListener('click',event=>{
 })
 selectSort.addEventListener('change', event => {
   if(event.target.value==='price-asc'){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then(setCurrentProducts)
       .then(() => render(currentProducts.sort((a, b) => (a.price > b.price) ? 1 : -1), currentPagination));
   }
   else if(event.target.value==='price-desc'){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then(setCurrentProducts)
       .then(() => render(currentProducts.sort((a, b) => (a.price < b.price) ? 1 : -1), currentPagination));
   }
   else if(event.target.value==='date-asc'){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then(setCurrentProducts)
       .then(() => render(currentProducts.sort((a, b) => (a.released < b.released) ? 1 : -1), currentPagination));
   }
   else if(event.target.value==='date-desc'){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
     .then(setCurrentProducts)
       .then(() => render(currentProducts.sort((a, b) => (a.released > b.released) ? 1 : -1), currentPagination));
     }
@@ -213,6 +208,6 @@ selectSort.addEventListener('change', event => {
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
 
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+  await setCurrentProducts(products);
+  await render(currentProducts, currentPagination);
 });
