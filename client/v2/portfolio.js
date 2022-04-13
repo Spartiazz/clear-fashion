@@ -1,6 +1,7 @@
 // Invoking strict mode https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode#invoking_strict_mode
 'use strict';
 
+
 // current products on the page
 let currentProducts = [];
 let currentPagination = {};
@@ -98,12 +99,19 @@ const renderProducts = products => {
  * Render page selector
  * @param  {Object} pagination
  */
-const renderPagination = pagination => {
-  const {currentPage, pageCount} = pagination;
-  const options = Array.from(
-    {'length': pageCount},
-    (value, index) => `<option value="${index + 1}">${index + 1}</option>`
-  ).join('');
+ const renderPagination = async (pagination) => {
+  const response = await fetch(
+    `https://clear-fashion-server-mu.vercel.app/count`
+  );
+  const body = await response.json();
+  const pageCount = pagination.pageSize
+  const currentPage = pagination.currentPage
+  console.log(parseInt(body[0]/pageCount)+1)
+  let options = ""
+
+  for(var i = 0; i < parseInt(body[0]/pageCount); i++){
+    options = options.concat('', `<option value="${i+1}">${i+1}</option>`)
+  }
 
   selectPage.innerHTML = options;
   selectPage.selectedIndex = currentPage - 1;
@@ -134,33 +142,36 @@ const render = (products, pagination) => {
  */
 selectShow.addEventListener('change', event => {
   currentPagination.pageSize=parseInt(event.target.value);
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then(setCurrentProducts)
       .then(() => render(currentProducts, currentPagination));
+  console.log(currentPagination)
 });
 selectPage.addEventListener('change',event=>{
   currentPagination.currentPage=parseInt(event.target.value);
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then(setCurrentProducts)
       .then(() => render(currentProducts, currentPagination));
+  console.log(currentPagination)
 })
 selectBrand.addEventListener('change',event=>{
-  currentPagination=(event.target.value);
-  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+  currentPagination.currentBrand=(event.target.value);
+  fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then(setCurrentProducts)
       .then(() => render(currentProducts, currentPagination));
+  console.log(currentPagination)
 })
 
 var clickedDate = false
 
 selectRecent.addEventListener('click',event=>{
   if(clickedDate === false){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
       .then(setCurrentProducts)
         .then(() => render(currentProducts, currentPagination));
   }
   else{
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then((data) => {return filterByDate(data);})
         .then(setCurrentProducts)
           .then(() => render(currentProducts, currentPagination));
@@ -170,12 +181,12 @@ selectRecent.addEventListener('click',event=>{
 var clickedPrice = true
 selectReasonable.addEventListener('click',event=>{
   if(clickedPrice === false){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
       .then(setCurrentProducts)
         .then(() => render(currentProducts, currentPagination));
   }
   else{
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then((data) => {return filterByPrice(data);})
         .then(setCurrentProducts)
           .then(() => render(currentProducts, currentPagination));
@@ -185,29 +196,28 @@ selectReasonable.addEventListener('click',event=>{
 })
 selectSort.addEventListener('change', event => {
   if(event.target.value==='price-asc'){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then(setCurrentProducts)
       .then(() => render(currentProducts.sort((a, b) => (a.price > b.price) ? 1 : -1), currentPagination));
   }
   else if(event.target.value==='price-desc'){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then(setCurrentProducts)
       .then(() => render(currentProducts.sort((a, b) => (a.price < b.price) ? 1 : -1), currentPagination));
   }
   else if(event.target.value==='date-asc'){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then(setCurrentProducts)
       .then(() => render(currentProducts.sort((a, b) => (a.released < b.released) ? 1 : -1), currentPagination));
   }
   else if(event.target.value==='date-desc'){
-    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination)
+    fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
     .then(setCurrentProducts)
       .then(() => render(currentProducts.sort((a, b) => (a.released > b.released) ? 1 : -1), currentPagination));
     }
 });
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
-
   await setCurrentProducts(products);
   await render(currentProducts, currentPagination);
 });
