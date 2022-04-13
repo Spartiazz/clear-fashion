@@ -60,6 +60,24 @@ app.get('/products/:id', async(request, response) => {
   response.send(products);
 });
 
+app.get('/count', async (request, response) => {
+  client = await MongoClient.connect(MONGODB_URI, { 'useNewUrlParser': true });
+  const data = await client.db(MONGODB_DB_NAME)
+  console.log("Connected to database ${data.databaseName}")
+
+  const products = data.collection('products')
+
+  let searchCursor
+
+  searchCursor = await products.countDocuments()
+
+  let result = []
+
+  result.push(searchCursor)
+
+  response.send(result)
+
+} )
 app.listen(PORT);
 
 console.log(`📡 Running on port ${PORT}`);
