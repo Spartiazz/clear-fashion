@@ -21,7 +21,7 @@ app.get('/', (request, response) => {
 });
 
 app.get('/products/search',async(request,response)=>{
-  const {price,brand}=request.query;
+  const {price,brand,page,size}=request.query;
   let product
   if(typeof price !== 'undefined'){
     let priceInt = parseInt(price);
@@ -37,6 +37,20 @@ app.get('/products/search',async(request,response)=>{
   }
   else{
     product = await db.find({})
+  }
+  if(typeof page !== 'undefined' && typeof size !== 'undefined'){
+    let pageInt = parseInt(page)
+    let sizeInt = parseInt(size)
+
+    const indexFirstProduct = (pageInt-1)*sizeInt
+
+    var myPage = []
+
+    for(var i = indexFirstProduct; i<indexFirstProduct+sizeInt; i++){
+      myPage.push(product[i])
+    }
+    product = myPage
+
   }
   response.send(product)
 });
