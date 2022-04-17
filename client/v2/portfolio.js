@@ -50,23 +50,23 @@ const filterByDate = products => {
   let twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate()-50);
   let filteredByDate=[];
-  for (let i = 0; i < products.result.length; i++) {
-     if(twoWeeksAgo<=new Date(products.result[i]['released'])){
-        filteredByDate.push(products.result[i]);
+  for (let i = 0; i < products.length; i++) {
+     if(twoWeeksAgo<=new Date(products[i]['released'])){
+        filteredByDate.push(products[i]);
      }
   }
-  products.result = filteredByDate
+  products = filteredByDate
   return products;
 }
 
 const filterByPrice = products => {
   let filteredByPrice=[];
-  for (let i = 0; i < products.result.length; i++) {
-     if(50>=products.result[i]['price']){
-        filteredByPrice.push(products.result[i]);
+  for (let i = 0; i < products.length; i++) {
+     if(50>=products[i]['price']){
+        filteredByPrice.push(products[i]);
      }
   }
-  products.result = filteredByPrice;
+  products = filteredByPrice;
   return products;
 }
 
@@ -172,7 +172,7 @@ selectRecent.addEventListener('click',event=>{
   }
   else{
     fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
-    .then((data) => {return filterByDate(data);})
+    .then((body) => {return filterByDate(body);})
         .then(setCurrentProducts)
           .then(() => render(currentProducts, currentPagination));
   }
@@ -187,7 +187,7 @@ selectReasonable.addEventListener('click',event=>{
   }
   else{
     fetchProducts(currentPagination.currentPage,currentPagination.pageSize,currentPagination.currentBrand)
-    .then((data) => {return filterByPrice(data);})
+    .then((body) => {return filterByPrice(body);})
         .then(setCurrentProducts)
           .then(() => render(currentProducts, currentPagination));
           console.log('click');
